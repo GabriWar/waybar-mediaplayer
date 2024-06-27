@@ -1,4 +1,8 @@
+
+original repo link https://github.com/raffaem/waybar-mediaplayer
+
 # waybar-mediaplayer
+
 
 This is a mediaplayer for [waybar](https://github.com/Alexays/Waybar).
 
