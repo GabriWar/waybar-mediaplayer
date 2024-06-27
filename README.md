@@ -52,7 +52,7 @@ waybar
 Run:
 
 ```
-git clone https://github.com/raffaem/waybar-mediaplayer "$HOME/.config/waybar/waybar-mediaplayer"
+git clone https://github.com/gabriwar/waybar-mediaplayer "$HOME/.config/waybar/waybar-mediaplayer"
 cd "$HOME/.config/waybar/waybar-mediaplayer"
 ```
 
