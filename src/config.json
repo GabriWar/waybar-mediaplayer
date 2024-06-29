@@ -4,8 +4,8 @@
   "notification_min_interval": 2,
   "widget_length": 20,
   "sepchar": "",
-  "surface_color": "gray",
-  "overlay_color": "cyan",
+  "surface_color": "@backgroundlight",
+  "overlay_color": "@backgrounddark",
   "interval": 1,
   "text_rot_int": 1000,
   "image_signal": 4,
@@ -13,12 +13,7 @@
   "player_name": "spotify",
   "convert_to_jpeg": false,
   "album_art_placeholder": "no",
-  "lyrics_providers": [
-    "Lrclib",
-    "Musixmatch",
-    "NetEase",
-    "Megalobiz"
-  ],
+  "lyrics_providers": ["Lrclib", "Musixmatch", "NetEase", "Megalobiz"],
   "lyrics_span_before": 2,
   "lyrics_span_after": 2
 }

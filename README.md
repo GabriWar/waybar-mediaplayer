@@ -1,8 +1,4 @@
-
-original repo link https://github.com/raffaem/waybar-mediaplayer
-
 # waybar-mediaplayer
-
 
 This is a mediaplayer for [waybar](https://github.com/Alexays/Waybar).
 
@@ -56,7 +52,7 @@ waybar
 Run:
 
 ```
-git clone https://github.com/gabriwar/waybar-mediaplayer "$HOME/.config/waybar/waybar-mediaplayer"
+git clone https://github.com/raffaem/waybar-mediaplayer "$HOME/.config/waybar/waybar-mediaplayer"
 cd "$HOME/.config/waybar/waybar-mediaplayer"
 ```
 

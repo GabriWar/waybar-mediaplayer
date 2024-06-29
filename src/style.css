@@ -1,707 +1,715 @@
+#custom-mediaplayer {
+  background-color: @backgroundlight;
+  color: @textcolor2;
+  border-radius: 100px;
+  padding: 0px 10px 0px 10px;
+  opacity: 0.8;
+}
+
 #custom-mediaplayer.perc0-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 0.0%,
-    gray 0.1%
-    );
+    @backgrounddark 0%,
+    @backgroundlight 0.1%
+  );
 }
 #custom-mediaplayer.perc1-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 1.0%,
-    gray 1.1%
-    );
+    @backgrounddark 1%,
+    @backgroundlight 1.1%
+  );
 }
 #custom-mediaplayer.perc2-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 2.0%,
-    gray 2.1%
-    );
+    @backgrounddark 2%,
+    @backgroundlight 2.1%
+  );
 }
 #custom-mediaplayer.perc3-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 3.0%,
-    gray 3.1%
-    );
+    @backgrounddark 3%,
+    @backgroundlight 3.1%
+  );
 }
 #custom-mediaplayer.perc4-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 4.0%,
-    gray 4.1%
-    );
+    @backgrounddark 4%,
+    @backgroundlight 4.1%
+  );
 }
 #custom-mediaplayer.perc5-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 5.0%,
-    gray 5.1%
-    );
+    @backgrounddark 5%,
+    @backgroundlight 5.1%
+  );
 }
 #custom-mediaplayer.perc6-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 6.0%,
-    gray 6.1%
-    );
+    @backgrounddark 6%,
+    @backgroundlight 6.1%
+  );
 }
 #custom-mediaplayer.perc7-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 7.0%,
-    gray 7.1%
-    );
+    @backgrounddark 7%,
+    @backgroundlight 7.1%
+  );
 }
 #custom-mediaplayer.perc8-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 8.0%,
-    gray 8.1%
-    );
+    @backgrounddark 8%,
+    @backgroundlight 8.1%
+  );
 }
 #custom-mediaplayer.perc9-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 9.0%,
-    gray 9.1%
-    );
+    @backgrounddark 9%,
+    @backgroundlight 9.1%
+  );
 }
 #custom-mediaplayer.perc10-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 10.0%,
-    gray 10.1%
-    );
+    @backgrounddark 10%,
+    @backgroundlight 10.1%
+  );
 }
 #custom-mediaplayer.perc11-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 11.0%,
-    gray 11.1%
-    );
+    @backgrounddark 11%,
+    @backgroundlight 11.1%
+  );
 }
 #custom-mediaplayer.perc12-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 12.0%,
-    gray 12.1%
-    );
+    @backgrounddark 12%,
+    @backgroundlight 12.1%
+  );
 }
 #custom-mediaplayer.perc13-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 13.0%,
-    gray 13.1%
-    );
+    @backgrounddark 13%,
+    @backgroundlight 13.1%
+  );
 }
 #custom-mediaplayer.perc14-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 14.0%,
-    gray 14.1%
-    );
+    @backgrounddark 14%,
+    @backgroundlight 14.1%
+  );
 }
 #custom-mediaplayer.perc15-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 15.0%,
-    gray 15.1%
-    );
+    @backgrounddark 15%,
+    @backgroundlight 15.1%
+  );
 }
 #custom-mediaplayer.perc16-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 16.0%,
-    gray 16.1%
-    );
+    @backgrounddark 16%,
+    @backgroundlight 16.1%
+  );
 }
 #custom-mediaplayer.perc17-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 17.0%,
-    gray 17.1%
-    );
+    @backgrounddark 17%,
+    @backgroundlight 17.1%
+  );
 }
 #custom-mediaplayer.perc18-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 18.0%,
-    gray 18.1%
-    );
+    @backgrounddark 18%,
+    @backgroundlight 18.1%
+  );
 }
 #custom-mediaplayer.perc19-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 19.0%,
-    gray 19.1%
-    );
+    @backgrounddark 19%,
+    @backgroundlight 19.1%
+  );
 }
 #custom-mediaplayer.perc20-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 20.0%,
-    gray 20.1%
-    );
+    @backgrounddark 20%,
+    @backgroundlight 20.1%
+  );
 }
 #custom-mediaplayer.perc21-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 21.0%,
-    gray 21.1%
-    );
+    @backgrounddark 21%,
+    @backgroundlight 21.1%
+  );
 }
 #custom-mediaplayer.perc22-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 22.0%,
-    gray 22.1%
-    );
+    @backgrounddark 22%,
+    @backgroundlight 22.1%
+  );
 }
 #custom-mediaplayer.perc23-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 23.0%,
-    gray 23.1%
-    );
+    @backgrounddark 23%,
+    @backgroundlight 23.1%
+  );
 }
 #custom-mediaplayer.perc24-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 24.0%,
-    gray 24.1%
-    );
+    @backgrounddark 24%,
+    @backgroundlight 24.1%
+  );
 }
 #custom-mediaplayer.perc25-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 25.0%,
-    gray 25.1%
-    );
+    @backgrounddark 25%,
+    @backgroundlight 25.1%
+  );
 }
 #custom-mediaplayer.perc26-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 26.0%,
-    gray 26.1%
-    );
+    @backgrounddark 26%,
+    @backgroundlight 26.1%
+  );
 }
 #custom-mediaplayer.perc27-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 27.0%,
-    gray 27.1%
-    );
+    @backgrounddark 27%,
+    @backgroundlight 27.1%
+  );
 }
 #custom-mediaplayer.perc28-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 28.0%,
-    gray 28.1%
-    );
+    @backgrounddark 28%,
+    @backgroundlight 28.1%
+  );
 }
 #custom-mediaplayer.perc29-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 29.0%,
-    gray 29.1%
-    );
+    @backgrounddark 29%,
+    @backgroundlight 29.1%
+  );
 }
 #custom-mediaplayer.perc30-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 30.0%,
-    gray 30.1%
-    );
+    @backgrounddark 30%,
+    @backgroundlight 30.1%
+  );
 }
 #custom-mediaplayer.perc31-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 31.0%,
-    gray 31.1%
-    );
+    @backgrounddark 31%,
+    @backgroundlight 31.1%
+  );
 }
 #custom-mediaplayer.perc32-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 32.0%,
-    gray 32.1%
-    );
+    @backgrounddark 32%,
+    @backgroundlight 32.1%
+  );
 }
 #custom-mediaplayer.perc33-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 33.0%,
-    gray 33.1%
-    );
+    @backgrounddark 33%,
+    @backgroundlight 33.1%
+  );
 }
 #custom-mediaplayer.perc34-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 34.0%,
-    gray 34.1%
-    );
+    @backgrounddark 34%,
+    @backgroundlight 34.1%
+  );
 }
 #custom-mediaplayer.perc35-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 35.0%,
-    gray 35.1%
-    );
+    @backgrounddark 35%,
+    @backgroundlight 35.1%
+  );
 }
 #custom-mediaplayer.perc36-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 36.0%,
-    gray 36.1%
-    );
+    @backgrounddark 36%,
+    @backgroundlight 36.1%
+  );
 }
 #custom-mediaplayer.perc37-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 37.0%,
-    gray 37.1%
-    );
+    @backgrounddark 37%,
+    @backgroundlight 37.1%
+  );
 }
 #custom-mediaplayer.perc38-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 38.0%,
-    gray 38.1%
-    );
+    @backgrounddark 38%,
+    @backgroundlight 38.1%
+  );
 }
 #custom-mediaplayer.perc39-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 39.0%,
-    gray 39.1%
-    );
+    @backgrounddark 39%,
+    @backgroundlight 39.1%
+  );
 }
 #custom-mediaplayer.perc40-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 40.0%,
-    gray 40.1%
-    );
+    @backgrounddark 40%,
+    @backgroundlight 40.1%
+  );
 }
 #custom-mediaplayer.perc41-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 41.0%,
-    gray 41.1%
-    );
+    @backgrounddark 41%,
+    @backgroundlight 41.1%
+  );
 }
 #custom-mediaplayer.perc42-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 42.0%,
-    gray 42.1%
-    );
+    @backgrounddark 42%,
+    @backgroundlight 42.1%
+  );
 }
 #custom-mediaplayer.perc43-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 43.0%,
-    gray 43.1%
-    );
+    @backgrounddark 43%,
+    @backgroundlight 43.1%
+  );
 }
 #custom-mediaplayer.perc44-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 44.0%,
-    gray 44.1%
-    );
+    @backgrounddark 44%,
+    @backgroundlight 44.1%
+  );
 }
 #custom-mediaplayer.perc45-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 45.0%,
-    gray 45.1%
-    );
+    @backgrounddark 45%,
+    @backgroundlight 45.1%
+  );
 }
 #custom-mediaplayer.perc46-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 46.0%,
-    gray 46.1%
-    );
+    @backgrounddark 46%,
+    @backgroundlight 46.1%
+  );
 }
 #custom-mediaplayer.perc47-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 47.0%,
-    gray 47.1%
-    );
+    @backgrounddark 47%,
+    @backgroundlight 47.1%
+  );
 }
 #custom-mediaplayer.perc48-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 48.0%,
-    gray 48.1%
-    );
+    @backgrounddark 48%,
+    @backgroundlight 48.1%
+  );
 }
 #custom-mediaplayer.perc49-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 49.0%,
-    gray 49.1%
-    );
+    @backgrounddark 49%,
+    @backgroundlight 49.1%
+  );
 }
 #custom-mediaplayer.perc50-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 50.0%,
-    gray 50.1%
-    );
+    @backgrounddark 50%,
+    @backgroundlight 50.1%
+  );
 }
 #custom-mediaplayer.perc51-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 51.0%,
-    gray 51.1%
-    );
+    @backgrounddark 51%,
+    @backgroundlight 51.1%
+  );
 }
 #custom-mediaplayer.perc52-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 52.0%,
-    gray 52.1%
-    );
+    @backgrounddark 52%,
+    @backgroundlight 52.1%
+  );
 }
 #custom-mediaplayer.perc53-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 53.0%,
-    gray 53.1%
-    );
+    @backgrounddark 53%,
+    @backgroundlight 53.1%
+  );
 }
 #custom-mediaplayer.perc54-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 54.0%,
-    gray 54.1%
-    );
+    @backgrounddark 54%,
+    @backgroundlight 54.1%
+  );
 }
 #custom-mediaplayer.perc55-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 55.0%,
-    gray 55.1%
-    );
+    @backgrounddark 55%,
+    @backgroundlight 55.1%
+  );
 }
 #custom-mediaplayer.perc56-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 56.0%,
-    gray 56.1%
-    );
+    @backgrounddark 56%,
+    @backgroundlight 56.1%
+  );
 }
 #custom-mediaplayer.perc57-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 57.0%,
-    gray 57.1%
-    );
+    @backgrounddark 57%,
+    @backgroundlight 57.1%
+  );
 }
 #custom-mediaplayer.perc58-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 58.0%,
-    gray 58.1%
-    );
+    @backgrounddark 58%,
+    @backgroundlight 58.1%
+  );
 }
 #custom-mediaplayer.perc59-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 59.0%,
-    gray 59.1%
-    );
+    @backgrounddark 59%,
+    @backgroundlight 59.1%
+  );
 }
 #custom-mediaplayer.perc60-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 60.0%,
-    gray 60.1%
-    );
+    @backgrounddark 60%,
+    @backgroundlight 60.1%
+  );
 }
 #custom-mediaplayer.perc61-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 61.0%,
-    gray 61.1%
-    );
+    @backgrounddark 61%,
+    @backgroundlight 61.1%
+  );
 }
 #custom-mediaplayer.perc62-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 62.0%,
-    gray 62.1%
-    );
+    @backgrounddark 62%,
+    @backgroundlight 62.1%
+  );
 }
 #custom-mediaplayer.perc63-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 63.0%,
-    gray 63.1%
-    );
+    @backgrounddark 63%,
+    @backgroundlight 63.1%
+  );
 }
 #custom-mediaplayer.perc64-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 64.0%,
-    gray 64.1%
-    );
+    @backgrounddark 64%,
+    @backgroundlight 64.1%
+  );
 }
 #custom-mediaplayer.perc65-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 65.0%,
-    gray 65.1%
-    );
+    @backgrounddark 65%,
+    @backgroundlight 65.1%
+  );
 }
 #custom-mediaplayer.perc66-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 66.0%,
-    gray 66.1%
-    );
+    @backgrounddark 66%,
+    @backgroundlight 66.1%
+  );
 }
 #custom-mediaplayer.perc67-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 67.0%,
-    gray 67.1%
-    );
+    @backgrounddark 67%,
+    @backgroundlight 67.1%
+  );
 }
 #custom-mediaplayer.perc68-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 68.0%,
-    gray 68.1%
-    );
+    @backgrounddark 68%,
+    @backgroundlight 68.1%
+  );
 }
 #custom-mediaplayer.perc69-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 69.0%,
-    gray 69.1%
-    );
+    @backgrounddark 69%,
+    @backgroundlight 69.1%
+  );
 }
 #custom-mediaplayer.perc70-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 70.0%,
-    gray 70.1%
-    );
+    @backgrounddark 70%,
+    @backgroundlight 70.1%
+  );
 }
 #custom-mediaplayer.perc71-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 71.0%,
-    gray 71.1%
-    );
+    @backgrounddark 71%,
+    @backgroundlight 71.1%
+  );
 }
 #custom-mediaplayer.perc72-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 72.0%,
-    gray 72.1%
-    );
+    @backgrounddark 72%,
+    @backgroundlight 72.1%
+  );
 }
 #custom-mediaplayer.perc73-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 73.0%,
-    gray 73.1%
-    );
+    @backgrounddark 73%,
+    @backgroundlight 73.1%
+  );
 }
 #custom-mediaplayer.perc74-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 74.0%,
-    gray 74.1%
-    );
+    @backgrounddark 74%,
+    @backgroundlight 74.1%
+  );
 }
 #custom-mediaplayer.perc75-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 75.0%,
-    gray 75.1%
-    );
+    @backgrounddark 75%,
+    @backgroundlight 75.1%
+  );
 }
 #custom-mediaplayer.perc76-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 76.0%,
-    gray 76.1%
-    );
+    @backgrounddark 76%,
+    @backgroundlight 76.1%
+  );
 }
 #custom-mediaplayer.perc77-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 77.0%,
-    gray 77.1%
-    );
+    @backgrounddark 77%,
+    @backgroundlight 77.1%
+  );
 }
 #custom-mediaplayer.perc78-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 78.0%,
-    gray 78.1%
-    );
+    @backgrounddark 78%,
+    @backgroundlight 78.1%
+  );
 }
 #custom-mediaplayer.perc79-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 79.0%,
-    gray 79.1%
-    );
+    @backgrounddark 79%,
+    @backgroundlight 79.1%
+  );
 }
 #custom-mediaplayer.perc80-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 80.0%,
-    gray 80.1%
-    );
+    @backgrounddark 80%,
+    @backgroundlight 80.1%
+  );
 }
 #custom-mediaplayer.perc81-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 81.0%,
-    gray 81.1%
-    );
+    @backgrounddark 81%,
+    @backgroundlight 81.1%
+  );
 }
 #custom-mediaplayer.perc82-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 82.0%,
-    gray 82.1%
-    );
+    @backgrounddark 82%,
+    @backgroundlight 82.1%
+  );
 }
 #custom-mediaplayer.perc83-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 83.0%,
-    gray 83.1%
-    );
+    @backgrounddark 83%,
+    @backgroundlight 83.1%
+  );
 }
 #custom-mediaplayer.perc84-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 84.0%,
-    gray 84.1%
-    );
+    @backgrounddark 84%,
+    @backgroundlight 84.1%
+  );
 }
 #custom-mediaplayer.perc85-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 85.0%,
-    gray 85.1%
-    );
+    @backgrounddark 85%,
+    @backgroundlight 85.1%
+  );
 }
 #custom-mediaplayer.perc86-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 86.0%,
-    gray 86.1%
-    );
+    @backgrounddark 86%,
+    @backgroundlight 86.1%
+  );
 }
 #custom-mediaplayer.perc87-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 87.0%,
-    gray 87.1%
-    );
+    @backgrounddark 87%,
+    @backgroundlight 87.1%
+  );
 }
 #custom-mediaplayer.perc88-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 88.0%,
-    gray 88.1%
-    );
+    @backgrounddark 88%,
+    @backgroundlight 88.1%
+  );
 }
 #custom-mediaplayer.perc89-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 89.0%,
-    gray 89.1%
-    );
+    @backgrounddark 89%,
+    @backgroundlight 89.1%
+  );
 }
 #custom-mediaplayer.perc90-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 90.0%,
-    gray 90.1%
-    );
+    @backgrounddark 90%,
+    @backgroundlight 90.1%
+  );
 }
 #custom-mediaplayer.perc91-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 91.0%,
-    gray 91.1%
-    );
+    @backgrounddark 91%,
+    @backgroundlight 91.1%
+  );
 }
 #custom-mediaplayer.perc92-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 92.0%,
-    gray 92.1%
-    );
+    @backgrounddark 92%,
+    @backgroundlight 92.1%
+  );
 }
 #custom-mediaplayer.perc93-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 93.0%,
-    gray 93.1%
-    );
+    @backgrounddark 93%,
+    @backgroundlight 93.1%
+  );
 }
 #custom-mediaplayer.perc94-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 94.0%,
-    gray 94.1%
-    );
+    @backgrounddark 94%,
+    @backgroundlight 94.1%
+  );
 }
 #custom-mediaplayer.perc95-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 95.0%,
-    gray 95.1%
-    );
+    @backgrounddark 95%,
+    @backgroundlight 95.1%
+  );
 }
 #custom-mediaplayer.perc96-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 96.0%,
-    gray 96.1%
-    );
+    @backgrounddark 96%,
+    @backgroundlight 96.1%
+  );
 }
 #custom-mediaplayer.perc97-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 97.0%,
-    gray 97.1%
-    );
+    @backgrounddark 97%,
+    @backgroundlight 97.1%
+  );
 }
 #custom-mediaplayer.perc98-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 98.0%,
-    gray 98.1%
-    );
+    @backgrounddark 98%,
+    @backgroundlight 98.1%
+  );
 }
 #custom-mediaplayer.perc99-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 99.0%,
-    gray 99.1%
-    );
+    @backgrounddark 99%,
+    @backgroundlight 99.1%
+  );
 }
 #custom-mediaplayer.perc100-0 {
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to right,
-    cyan 100.0%,
-    gray 100.1%
-    );
+    @backgrounddark 100%,
+    @backgroundlight 100.1%
+  );
 }
