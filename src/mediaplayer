@@ -210,7 +210,7 @@ def signal_album_art_change():
 
 def download_art(art_url):
     logger.debug("Updating album art")
-    if art_url.startswith("http"):
+    if (art_url.startswith("http")):
         resp = requests.get(art_url)
         with open(artfp, "wb") as fh:
             fh.write(resp.content)
@@ -297,7 +297,6 @@ def download_lyrics(artist, title):
     lyrlogger.setLevel(logging.INFO)
     lt = syncedlyrics.search(
         f"{artist} {title}",
-        allow_plain_format=False,
         providers=config["lyrics_providers"],
     )
     # This is the main logger
