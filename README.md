@@ -1,4 +1,4 @@
-# waybar-mediaplayer
+# waybar-mediaplayer (GABRIWAR VERSION FIXED LYRICS AND THEMING)
 
 This is a mediaplayer for [waybar](https://github.com/Alexays/Waybar).
 
