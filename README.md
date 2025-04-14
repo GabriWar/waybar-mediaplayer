@@ -1,4 +1,4 @@
-# waybar-mediaplayer
+# waybar-mediaplayer (GABRIWAR VERSION FIXED LYRICS AND THEMING)
 
 ## Retirement notice
 
