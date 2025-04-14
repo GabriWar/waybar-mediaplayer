@@ -295,24 +295,23 @@ def download_lyrics(artist, title):
     lyrlogger.handlers.clear()
     lyrlogger.addHandler(logging.StreamHandler(stream))
     lyrlogger.setLevel(logging.INFO)
-    lt = syncedlyrics.search(
-        f"{artist} {title}",
-        providers=config["lyrics_providers"],
-    )
-    # This is the main logger
-    # logger.debug("GOT LYRICS")
-    # logger.debug("-"*10)
-    # logger.debug(lt)
-    # logger.debug("-"*10)
+    try:
+        lt = syncedlyrics.search(
+            f"{artist} {title}",
+            synced_only=True,
+            providers=config["lyrics_providers"],
+        )
+    except Exception:
+        logger.debug(
+            "ERROR: syncedlyrics.search threw an exception. Returning None.")
+        return None
     if lt is None:
-        lt = ""
+        logger.debug(
+            "ERROR: syncedlyrics.search returned None. Returning None.")
+        return None
     lt = lt.replace("\n", "")
     lt = lt.split("[")
     lt = ["["+x for x in lt if x]
-    # logger.debug("SPLITTING")
-    # logger.debug("-"*10)
-    # logger.debug(lt)
-    # logger.debug("-"*10)
     provider = stream.getvalue().split("on ")[1].strip()
     stream.close()
     SyncedLyrics = namedtuple("SyncedLyrics", ["lt", "provider"])
@@ -329,8 +328,9 @@ def get_new_lyrics(artist, title):
         "provider": None,
     }
     lyr = download_lyrics(artist, title)
-    if lyr.lt is None:
-        logger.debug("No lyrics, returning")
+    if lyr is None:
+        logger.debug("ERROR: download_lyrics returned None. Returning.")
+        lyrics = None
         return
     lyrics["provider"] = lyr.provider
     for i, line in enumerate(lyr.lt):
@@ -346,7 +346,8 @@ def get_new_lyrics(artist, title):
         try:
             secs = int(timing2[0]) * 60.0 + float(timing2[1])
         except ValueError:
-            logger.debug(f"ERROR: ValueError while converting timing2={timing2} to seconds")
+            logger.debug(f"ERROR: ValueError while converting timing2={
+                         timing2} to seconds")
             continue
         # get lyrics text
         text = m.group(2).strip()
@@ -462,10 +463,10 @@ def update_progressbar(manager, player):
         and metadata["length"] == last_metadata["length"]
         and lyrics_same
     )
-    # CHeck if we need to update
+    # Check if we need to update
     if same_song and \
-        not pbar_needs_update and \
-        not rot_needs_update:
+            not pbar_needs_update and \
+            not rot_needs_update:
         logger.debug(
             "Song is the same and neither the text "
             "nor the progressbar nor the lyrics needs an update. Returning"
@@ -478,10 +479,13 @@ def update_progressbar(manager, player):
     s = [metadata["title"], metadata["artist"], metadata["album"]]
     # -- Lyrics
     curr_line = None
+    text_len = None
     if lyrics:
-        ll = lyrics.get("max_len", 3)
-        s.append("-" * ll)
-        provider = lyrics.get("provider","")
+        cand = [len(x) for x in s]
+        cand.append(lyrics.get("max_len", 3))
+        text_len = max(cand)
+        s.append("-" * text_len)
+        provider = lyrics.get("provider", "")
         if provider is None:
             provider = "NO PROVIDER"
         s.append("["+provider+"]")
@@ -508,13 +512,18 @@ def update_progressbar(manager, player):
             if t == lyrics_ix:
                 curr_line = len(s) - 1
     # -- Tooltip
-    center_text(s, lyrics.get("max_len", None))
+    center_text(s, text_len)
     if curr_line:
         s[curr_line] = "<b>" + s[curr_line] + "</b>"
-    tooltip = f"<span variant='title-caps' font_weight='bold'>{s[0]}</span>\n"
-    tooltip += f"{s[1]}\n"
-    tooltip += f"<i>{s[2]}</i>\n"
-    tooltip += "\n".join(s[3:])
+    tooltip = f"<span variant='title-caps' font_weight='bold'>{s[0]}</span>"
+    tooltip += f"\n{s[1]}"
+    # Skip album in tooltip if we don't have it
+    s[2] = s[2].strip()
+    if s[2]:
+        tooltip += f"\n<i>{s[2]}</i>"
+    if len(s) >= 4 and s[3].strip():
+        tooltip += "\n"
+        tooltip += "\n".join(s[3:])
     write_output(widget_text, gen_class(perc), tooltip)
     # It's important to return True to keep the handler going
     last_metadata = metadata
