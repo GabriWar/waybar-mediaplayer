@@ -129,7 +129,8 @@ def write_output(text=None, class_=None, tooltip=""):
     global config
     # Default values if not explicitly set
     if not text:
-        text = "" + (" " * (config["widget_length"] - 1))
+        # text = "r" + (" " * (config["widget_length"] - 1))
+        text = (" " * (config["widget_length"]))
     if not class_:
         class_ = gen_class(0.0)
     if not tooltip:
@@ -167,7 +168,7 @@ def gen_widget_text(player):
     global last_rot, last_rot_time, is_text_rotating
 
     metadata = player.props.metadata
-    # artist = player.get_artist()
+    artist = player.get_artist()
     # artist = metadata["xesam:artist"][0]
     title = player.get_title() or ""
     # title = metadata["xesam:title"]
@@ -181,10 +182,10 @@ def gen_widget_text(player):
     ):
         song_info = "AD PLAYING"
     else:
-        song_info = title.strip()
+        song_info = f"{title.strip()} - {artist.strip()}"
 
     if not is_text_rotating:
-        text = left_text(icon + song_info)
+        text = icon + song_info
     else:
         song_info += " " + config["sepchar"] + " "
         elapsed = (time.time() - last_rot_time) * 1000
@@ -360,15 +361,6 @@ def get_new_lyrics(artist, title):
         logger.debug(str(i) + str(line) + "->" + "[" + str(secs) + "] " + text)
     lyrics["text"].append("[OUTRO]")
     lyrics["secs"].append(lyrics["secs"][-1] + 1)
-
-
-def left_text(s):
-    le = len(s)
-    if le > config["widget_length"]:
-        return s
-    missing = config["widget_length"] - le
-    s = s + " " * (missing)
-    return s
 
 
 def center_text(s, ml=None):
