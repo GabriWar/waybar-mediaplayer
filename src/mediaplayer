@@ -504,14 +504,15 @@ def update_progressbar(manager, player):
             if t == lyrics_ix:
                 curr_line = len(s) - 1
     # -- Tooltip
+    # Check if album is empty before centering
+    has_album = s[2].strip() != ""
     center_text(s, text_len)
     if curr_line:
         s[curr_line] = "<b>" + s[curr_line] + "</b>"
     tooltip = f"<span variant='title-caps' font_weight='bold'>{s[0]}</span>"
     tooltip += f"\n{s[1]}"
     # Skip album in tooltip if we don't have it
-    s[2] = s[2].strip()
-    if s[2]:
+    if has_album:
         tooltip += f"\n<i>{s[2]}</i>"
     if len(s) >= 4 and s[3].strip():
         tooltip += "\n"
