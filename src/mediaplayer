@@ -30,6 +30,8 @@ from gi.repository import GLib, Playerctl  # noqa: E402
 config = None
 logger = logging.getLogger(__name__)
 artfp = Path("/tmp/waybar-mediaplayer-art")
+selected_player_fp = Path("/tmp/waybar-mediaplayer-selected-player")
+current_player_name = None
 last_metadata = None
 last_art_url = None
 last_rot = 0
@@ -43,17 +45,56 @@ is_text_rotating = None
 lyrics = dict()
 
 
-def on_player_appeared(manager, player, requested_player):
+def on_player_appeared(manager, player, requested_players):
     logger.debug("I was called")
-    if player and (player.name == requested_player):
+    if player and any(player.name.startswith(rp) for rp in requested_players):
         init_player(manager, player)
     else:
         logger.debug(
             "New player appeared, but it's not the selected player, skipping"
         )
-
     logger.debug("Returning True")
     return True
+
+
+def get_selected_player():
+    """Get the currently selected player from file."""
+    if selected_player_fp.is_file():
+        with open(selected_player_fp, "r") as f:
+            return f.read().strip()
+    return None
+
+
+def set_selected_player(player_name):
+    """Save the selected player to file."""
+    with open(selected_player_fp, "w") as f:
+        f.write(player_name)
+
+
+def get_active_player(manager, requested_players):
+    """Get the active player, prioritizing the selected one."""
+    selected = get_selected_player()
+    available_players = []
+
+    result = subprocess.run(
+        ["playerctl", "--list-all"],
+        capture_output=True,
+        text=True,
+        timeout=1
+    )
+    if result.returncode == 0:
+        all_players = result.stdout.strip().split('\n')
+        for player in all_players:
+            if player and any(player.startswith(rp) for rp in requested_players):
+                available_players.append(player)
+
+    if not available_players:
+        return None
+
+    if selected and selected in available_players:
+        return selected
+
+    return available_players[0]
 
 
 def delete_album_art():
@@ -95,7 +136,6 @@ def on_metadata(player, metadata, manager):
 def on_playback_status(player, status, manager):
     logger.info("I was called")
     logger.debug(f"status={status}")
-    # Update the icon in the progressbar (play/pause)
     logger.debug("Calling register_refresh_interval_callback")
     register_refresh_interval_callback(player, manager)
     logger.debug("Calling update_progressbar")
@@ -107,19 +147,16 @@ def on_playback_status(player, status, manager):
 def on_refresh_interval(manager):
     global is_refint
     logger.debug("I was called")
-    # If there are no players, stop calling this handler
     if len(manager.props.players) == 0:
         logger.debug("Returning False")
         is_refint = False
         return False
     player = manager.props.players[0]
-    # If we are not playing, stop calling this handler
     is_playing = player.props.status == "Playing"
     if not is_playing:
         logger.debug("Returning False")
         is_refint = False
         return False
-    # Update progressbar and return
     update_progressbar(manager, player)
     logger.debug("Returning True")
     return True
@@ -525,8 +562,11 @@ def update_progressbar(manager, player):
 
 
 def init_player(manager, name):
+    global current_player_name
     logger.debug("I was called")
     logger.debug(f"name.name={name.name}")
+    # Track current player
+    current_player_name = name.name
     # Register handlers
     player = Playerctl.Player.new_from_name(name)
     player.connect("playback-status", on_playback_status, manager)
@@ -604,33 +644,95 @@ def main():
 
     manager = Playerctl.PlayerManager()
 
-    requested_player = config["player_name"].split(".")[0]
+    # Support both string and list for player_name
+    player_names = config["player_name"]
+    if isinstance(player_names, str):
+        player_names = [player_names]
+    # Split on "." to get base player names
+    requested_players = [pn.split(".")[0] for pn in player_names]
     logger.debug(
-        f"Splitting player_name on `.`. requested_player={requested_player}"
+        f"Requested players: {requested_players}"
     )
 
+    # Handle select command
+    if arguments.command == "select":
+        # Get available players
+        available = []
+        for player in manager.props.player_names:
+            if any(player.name.startswith(rp) for rp in requested_players):
+                available.append(player.name)
+
+        if not available:
+            print("No media players found")
+            sys.exit(0)
+
+        # Use rofi for player selection
+        menu_cmd = ["rofi", "-dmenu", "-p", "Select player:"]
+
+        # Show menu
+        try:
+            result = subprocess.run(
+                menu_cmd,
+                input="\n".join(available),
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                selected = result.stdout.strip()
+                set_selected_player(selected)
+                print(f"Selected player: {selected}")
+        except Exception as e:
+            logger.error(f"Error running menu: {e}")
+        sys.exit(0)
+
+    # Handle control commands using playerctl CLI (more reliable for quick actions)
+    if arguments.command in ["play-pause", "next", "previous"]:
+        # Get active player
+        active_player = get_active_player(manager, requested_players)
+
+        if not active_player:
+            logger.debug("No active player found")
+            sys.exit(0)
+
+        # Use playerctl CLI for the action
+        cmd_map = {
+            "play-pause": "play-pause",
+            "next": "next",
+            "previous": "previous"
+        }
+
+        cmd = ["playerctl", "--player=" + active_player, cmd_map[arguments.command]]
+        logger.debug(f"Running command: {' '.join(cmd)}")
+        subprocess.run(cmd)
+        sys.exit(0)
+
+    # Handle monitor command
     ini = False
-    for player in manager.props.player_names:
-        logger.debug(f"Found player '{player.name}'")
-        if not player.name.startswith(requested_player):
-            logger.debug("This is not the filtered player, skipping it")
-            continue
-        if arguments.command == "play-pause":
-            Playerctl.Player.new(player.name).play_pause()
-            sys.exit(0)
-        elif arguments.command == "next":
-            Playerctl.Player.new(player.name).next()
-            sys.exit(0)
-        elif arguments.command == "previous":
-            Playerctl.Player.new(player.name).previous()
-            sys.exit(0)
-        elif arguments.command == "monitor":
+    if arguments.command == "monitor":
+        # Prioritize selected player
+        selected = get_selected_player()
+        player_to_init = None
+
+        for player in manager.props.player_names:
+            logger.debug(f"Found player '{player.name}'")
+            if not any(player.name.startswith(rp) for rp in requested_players):
+                logger.debug("This is not the filtered player, skipping it")
+                continue
+
+            # Use selected player if available, otherwise first match
+            if selected and player.name == selected:
+                player_to_init = player
+                break
+            elif not player_to_init:
+                player_to_init = player
+
+        if player_to_init:
             logger.debug("Initializing player")
-            init_player(manager, player)
+            init_player(manager, player_to_init)
             ini = True
-        else:
-            logger.critical(f"Invalid argument {sys.argv[1]}")
-            sys.exit(1)
+    elif arguments.command not in ["play-pause", "next", "previous", "select"]:
+        logger.critical(f"Invalid argument {arguments.command}")
+        sys.exit(1)
 
     if not ini:
         logger.debug("No player found. Printing empty")
@@ -639,7 +741,7 @@ def main():
     loop = GLib.MainLoop()
 
     on_player_appeared_inst = partial(
-        on_player_appeared, requested_player=requested_player
+        on_player_appeared, requested_players=requested_players
     )
     # manager.connect("player-appeared", on_player_appeared)
     manager.connect("name-appeared", on_player_appeared_inst)
