@@ -84,9 +84,12 @@ def get_active_player(manager, requested_players):
     )
     if result.returncode == 0:
         all_players = result.stdout.strip().split('\n')
-        for player in all_players:
-            if player and any(player.startswith(rp) for rp in requested_players):
-                available_players.append(player)
+        # Iterate over requested_players to maintain priority order
+        for rp in requested_players:
+            for player in all_players:
+                if player and player.startswith(rp):
+                    if player not in available_players:
+                        available_players.append(player)
 
     if not available_players:
         return None
