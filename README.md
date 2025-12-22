@@ -21,20 +21,20 @@ Synced lyrics in tooltip:
 ![lyrics](./showcase/lyrics.png)
 
 It features:
-1. Progress bar
-2. Tooltip that displays title, author and album
-3. Synced lyrics in tooltip
-4. Album cover art (click to zoom)
-5. Optional notification on song change
-6. Click to play/pause, scroll up/down to scroll up/down on the playlist
+1. Multi-player support (Firefox, Chrome, Chromium, Thorium, Spotify, and more)
+2. Right-click to cycle through active players
+3. Progress bar
+4. Tooltip that displays title, author and album
+5. Synced lyrics in tooltip
+6. Album cover art (click to zoom)
+7. Optional notification on song change
+8. Click to play/pause, scroll up/down for next/previous track
 
 ## Requirements
 
-[playerctl](https://github.com/altdesktop/playerctl) must be installed.
-
-The default configuration use Nerd Fonts, so it requires waybar to use a Nerd Font.
-
-The default configuration use [feh](https://github.com/derf/feh) to open the album art image.
+- [playerctl](https://github.com/altdesktop/playerctl) must be installed
+- The default configuration uses Nerd Fonts, so it requires waybar to use a Nerd Font
+- The default configuration uses [feh](https://github.com/derf/feh) to open the album art image
 
 ## Install
 
@@ -67,9 +67,13 @@ The default configuration use [feh](https://github.com/derf/feh) to open the alb
     pip3 install -r requirements.txt
     ```
 
-1. You need to find the name of your player. To do so, run `playerctl --list-all` while your player is running.
+1. You can configure which players to support by editing `"$HOME/.config/waybar/waybar-mediaplayer/src/config.json`. The default configuration supports Firefox, Chrome, Chromium, Thorium, and Spotify:
 
-1. Open `"$HOME/.config/waybar/waybar-mediaplayer/src/config.json` and change `player_name` with the name of your player.
+    ```json
+    "player_name": ["firefox", "chrome", "chromium", "thorium", "spotify"]
+    ```
+
+    To find available players on your system, run `playerctl --list-all` while your media player is running. You can add or remove players from this list as needed.
 
 1. Put the following in `$HOME/.config/waybar/config`:
 
@@ -90,6 +94,7 @@ The default configuration use [feh](https://github.com/derf/feh) to open the alb
         "return-type": "json",
         "format": "{}",
         "on-click": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer play-pause",
+        "on-click-right": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer select",
         "on-scroll-up": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer next",
         "on-scroll-down": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer previous",
         "min-length": 20,
@@ -110,7 +115,11 @@ The default configuration use [feh](https://github.com/derf/feh) to open the alb
 
 1. Start waybar using the wrapper script `start_waybar`.
 
-The mediaplayer should work. Click on the progress bar to start/stop playing, and scroll on it to change song.
+The mediaplayer should work with the following controls:
+- **Left click**: Play/pause
+- **Right click**: Cycle through active players
+- **Scroll up**: Next track
+- **Scroll down**: Previous track
 
 ## Update
 
@@ -120,6 +129,14 @@ git pull
 ```
 
 ## Personalization
+
+### Multiple Players
+
+The widget supports monitoring multiple media players simultaneously. Right-click on the widget to cycle through all available players. The selected player becomes the active player for controls (play/pause, next, previous). Your selection persists across sessions.
+
+If no player is selected, the widget automatically uses the first available player from your configured list.
+
+### Other Options
 
 To disable notifications, put `is_notification=false` in `config.json`.
 
@@ -131,11 +148,13 @@ If you change the colors of the bar in `$HOME/.config/waybar/waybar-mediaplayer/
 
 ## Troubleshooting
 
-### Firefox users
+### Browser Support (Firefox, Chrome, etc.)
 
-Although Firefox reports MPRIS metadata, the metadata it reports is not sufficient, as it doesn't report song's length. Please install the [Plasma Integration](https://addons.mozilla.org/en-US/firefox/addon/plasma-integration) add-on and use `plasma-browser-integration` as `player_name` in `$HOME/.config/waybar/waybar-mediaplayer/src/config.json`.
+Browsers with MPRIS support are now natively supported. Firefox, Chrome, Chromium, and Thorium work out of the box.
 
-To have album art, make sure to set `convert_to_jpeg` to `true` in `$HOME/.config/waybar/waybar-mediaplayer/src/config.json` (this option decreases performance, don't use it if not necessary).
+**Note for Firefox users**: If you experience issues with the progress bar (Firefox may not always report song length), you can optionally install the [Plasma Integration](https://addons.mozilla.org/en-US/firefox/addon/plasma-integration) add-on for better metadata support. If using this add-on, add `"plasma-browser-integration"` to your `player_name` array in `config.json`.
+
+For album art from browsers, you may need to set `convert_to_jpeg` to `true` in `config.json` (this option may decrease performance slightly).
 
 ### Me progress bar doesn't work
 
@@ -143,7 +162,7 @@ It's likely cause by the player not reporting song length or position back to us
 
 ### Player reports its name with instance number
 
-If the player reports an instance after its name, please provide only the player name without the instance number. For example, [kew](https://github.com/ravachol/kew) may report itself as `kew123456`, where `123456` is an instance number which will change with different runs of `kew`. In this case, we report only `kew` without the instance number. This software will check whether the reported player name _starts_ with the name you provide to bind the correct player.
+This is handled automatically. If a player reports an instance number after its name (e.g., `spotify.instance12345`), you only need to configure the base player name (e.g., `"spotify"`) in `config.json`. The software will automatically match any player whose name starts with the configured name.
 
 ### Me title and tooltip are empty
 

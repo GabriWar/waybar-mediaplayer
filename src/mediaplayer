@@ -654,35 +654,42 @@ def main():
         f"Requested players: {requested_players}"
     )
 
-    # Handle select command
+    # Handle select command (cycle through players)
     if arguments.command == "select":
-        # Get available players
+        # Get available players using playerctl CLI
+        result = subprocess.run(
+            ["playerctl", "--list-all"],
+            capture_output=True,
+            text=True,
+            timeout=1
+        )
+
         available = []
-        for player in manager.props.player_names:
-            if any(player.name.startswith(rp) for rp in requested_players):
-                available.append(player.name)
+        if result.returncode == 0:
+            all_players = result.stdout.strip().split('\n')
+            for player in all_players:
+                if player and any(player.startswith(rp) for rp in requested_players):
+                    available.append(player)
 
         if not available:
-            print("No media players found")
+            logger.debug("No media players found")
             sys.exit(0)
 
-        # Use rofi for player selection
-        menu_cmd = ["rofi", "-dmenu", "-p", "Select player:"]
+        # Get current selection
+        current = get_selected_player()
 
-        # Show menu
-        try:
-            result = subprocess.run(
-                menu_cmd,
-                input="\n".join(available),
-                capture_output=True,
-                text=True
-            )
-            if result.returncode == 0 and result.stdout.strip():
-                selected = result.stdout.strip()
-                set_selected_player(selected)
-                print(f"Selected player: {selected}")
-        except Exception as e:
-            logger.error(f"Error running menu: {e}")
+        # Find next player in the list (cycle)
+        if current and current in available:
+            current_idx = available.index(current)
+            next_idx = (current_idx + 1) % len(available)
+            next_player = available[next_idx]
+        else:
+            # No current selection or not in list, use first
+            next_player = available[0]
+
+        # Set new selection
+        set_selected_player(next_player)
+        logger.info(f"Cycled to player: {next_player}")
         sys.exit(0)
 
     # Handle control commands using playerctl CLI (more reliable for quick actions)
