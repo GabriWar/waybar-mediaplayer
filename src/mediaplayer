@@ -544,12 +544,16 @@ def update_progressbar(manager, player):
             if t == lyrics_ix:
                 curr_line = len(s) - 1
     # -- Tooltip
+    # Get player name for tooltip header
+    player_name = player.props.player_name.upper()
     # Check if album is empty before centering
     has_album = s[2].strip() != ""
     center_text(s, text_len)
     if curr_line:
         s[curr_line] = "<b>" + s[curr_line] + "</b>"
-    tooltip = f"<span variant='title-caps' font_weight='bold'>{s[0]}</span>"
+    # Add player name at the top
+    tooltip = f"<span font_weight='bold' size='small'>[{player_name}]</span>\n"
+    tooltip += f"<span variant='title-caps' font_weight='bold'>{s[0]}</span>"
     tooltip += f"\n{s[1]}"
     # Skip album in tooltip if we don't have it
     if has_album:
