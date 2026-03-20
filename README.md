@@ -85,13 +85,14 @@ It features:
     "image": {
       "path": "/tmp/waybar-mediaplayer-art",
       "size": 32,
-      "signal": 4,
+      "interval": 1,
       "on-click": "feh --auto-zoom --borderless --title 'feh-float' /tmp/waybar-mediaplayer-art"
     },
 
     "custom/mediaplayer": {
         "exec": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer monitor",
         "return-type": "json",
+        "restart-interval": 5,
         "format": "{}",
         "on-click": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer play-pause",
         "on-click-right": "$HOME/.config/waybar/waybar-mediaplayer/src/mediaplayer select",
@@ -101,6 +102,10 @@ It features:
         "max-length": 20
     },
     ```
+
+    > **Note:** `interval: 1` is used instead of `signal` for the image module. Using `signal` causes waybar to freeze on multi-monitor setups because two bar instances send `SIGRTMIN` simultaneously, deadlocking the GTK signal handler. Interval-based polling avoids this entirely.
+
+    > **Note:** `restart-interval: 5` is required on waybar 0.15.0. That version defaults `restart-interval` to 0, causing an immediate restart loop when the mediaplayer crashes, which starves the GTK event loop and breaks **all tooltips** across the entire bar.
 
     Put the following in `$HOME/.config/waybar/style.css`:
 
@@ -142,7 +147,7 @@ To disable notifications, put `is_notification=false` in `config.json`.
 
 To change widget's length, set `min-length` and `max-length` in `$HOME/.config/waybar/config`, and set `widget_length` in `$HOME/.config/waybar/waybar-mediaplayer/src/config.json`. These 3 variables MUST be set to the same value.
 
-In order for the album art to automatically update on song change, it's important that the `signal` variable of the `image` module in `$HOME/.config/waybar/config` matches the `image_signal` variable in `$HOME/.config/waybar/waybar-mediaplayer/src/config.json`.
+Album art updates automatically via interval polling. The `signal`-based approach is no longer used — see the install notes above.
 
 If you change the colors of the bar in `$HOME/.config/waybar/waybar-mediaplayer/src/config.json`, make sure to apply the changes by running `$HOME/.config/waybar/waybar-mediaplayer/src/mkstyle` and restart waybar.
 
