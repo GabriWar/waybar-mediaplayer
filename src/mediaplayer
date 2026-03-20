@@ -244,9 +244,8 @@ def gen_widget_text(player):
 
 
 def signal_album_art_change():
-    cmd = ["pkill", "-RTMIN+" + str(config["image_signal"]), "waybar"]
-    res = subprocess.run(cmd)
-    logger.debug(f"pkill returned: {res}")
+    # Image module uses interval polling now; sending SIGRTMIN would freeze waybar
+    pass
 
 
 def download_art(art_url):
