@@ -34,6 +34,7 @@ selected_player_fp = Path("/tmp/waybar-mediaplayer-selected-player")
 current_player_name = None
 last_metadata = None
 last_art_url = None
+last_title = None
 last_rot = 0
 last_rot_time = 0
 last_notification_time = 0
@@ -41,7 +42,7 @@ last_notification_time = 0
 is_refint = False
 format_class = None
 icons = {"play": " ", "stop": " "}
-is_text_rotating = None
+is_text_rotating = True  # always animate
 lyrics = dict()
 
 
@@ -129,22 +130,26 @@ def delete_album_art():
 
 
 def on_player_vanished(manager, player):
+    global last_art_url, last_title
     logger.info("I was called")
     write_output()
     delete_album_art()
+    last_art_url = None
+    last_title = None
     logger.info("Returning True")
     return True
 
 
 def check_player_selection(manager, requested_players):
     """Periodically check if the selected player changed and reinitialize."""
-    global current_player_name, last_metadata, last_art_url
+    global current_player_name, last_metadata, last_art_url, last_title
     active = get_active_player(manager, requested_players)
     if active and active != current_player_name:
         logger.info(f"Selected player changed to '{active}', reinitializing")
         # Reset cached state so art and tooltip are forced to refresh
         last_metadata = None
         last_art_url = None
+        last_title = None
         for player_name_obj in manager.props.player_names:
             if player_name_obj.name == active:
                 init_player(manager, player_name_obj)
@@ -255,7 +260,7 @@ def rotate_str_left(s, rot):
 
 
 def gen_widget_text(player):
-    global last_rot, last_rot_time, is_text_rotating
+    global last_rot, last_rot_time
 
     metadata = player.props.metadata
     artist = player.get_artist()
@@ -274,21 +279,19 @@ def gen_widget_text(player):
     else:
         song_info = f"{title.strip()} - {artist.strip()}"
 
-    if not is_text_rotating:
-        text = icon + song_info
+    max_text = config["widget_length"] - len(icon)
+    song_info += " " + config["sepchar"] + " "
+    elapsed = (time.time() - last_rot_time) * 1000
+    rot_needs_update = elapsed > config["text_rot_int"]
+    if rot_needs_update:
+        to_add = math.floor(elapsed / config["text_rot_int"])
+        l_rot = (last_rot + to_add) % len(song_info)
+        last_rot = l_rot
+        last_rot_time = time.time()
     else:
-        song_info += " " + config["sepchar"] + " "
-        elapsed = (time.time() - last_rot_time) * 1000
-        rot_needs_update = elapsed > config["text_rot_int"]
-        if rot_needs_update:
-            to_add = math.floor(elapsed / config["text_rot_int"])
-            l_rot = (last_rot + to_add) % len(song_info)
-            last_rot = l_rot
-            last_rot_time = time.time()
-        else:
-            l_rot = last_rot
-        song_info = rotate_str_left(song_info, l_rot)
-        text = icon + song_info
+        l_rot = last_rot
+    song_info = rotate_str_left(song_info, l_rot)
+    text = icon + song_info[:max_text]
 
     return text
 
@@ -354,7 +357,7 @@ def send_notification(summary, body):
 
 
 def update_metadata(player, metadata, manager):
-    global last_notification_time, last_art_url, is_text_rotating
+    global last_notification_time, last_art_url, last_title
     logger.info("I was called")
     metadata = dict(metadata)
     # Update progressbar
@@ -362,6 +365,12 @@ def update_metadata(player, metadata, manager):
     if not updated:
         logger.debug("Progress bar not updated. Returning")
         return False
+    title = player.get_title() or ""
+    artist = player.get_artist() or ""
+    # Reset art URL cache when song changes so same-album art is re-fetched
+    if title != last_title:
+        last_art_url = None
+        last_title = title
     # Download album art
     art_url = metadata.get("mpris:artUrl", None)
     if art_url and art_url != last_art_url:
@@ -373,13 +382,7 @@ def update_metadata(player, metadata, manager):
         notexp >= config["notification_min_interval"]
     ):
         send_notification(player.get_title(), player.get_artist())
-    # Does text need rotation?
-    title = player.get_title() or ""
-    is_text_rotating = (
-        len(title) + len(icons["stop"]) + 1 > config["widget_length"]
-    )
     # Lyrics
-    artist = player.get_artist() or ""
     get_new_lyrics(artist, title)
     logger.debug("Returning")
 
