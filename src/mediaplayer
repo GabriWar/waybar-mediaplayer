@@ -251,9 +251,10 @@ def signal_album_art_change():
 
 def download_art(art_url):
     logger.debug("Updating album art")
-    if (art_url.startswith("http")):
+    tmp = artfp.parent / (artfp.name + ".tmp")
+    if art_url.startswith("http"):
         resp = requests.get(art_url)
-        with open(artfp, "wb") as fh:
+        with open(tmp, "wb") as fh:
             fh.write(resp.content)
         logger.debug(
             f"Album art '{art_url}' downloaded and saved into '{artfp}'"
@@ -261,25 +262,24 @@ def download_art(art_url):
     elif art_url.startswith("file://"):
         art_url = art_url[7:]
         art_url = urllib.parse.unquote(art_url)
-        # symlinking the file doesn't work
-        # apparently symlinks are not followed
-        # artfp.symlink_to(art_url)
-        shutil.copy(art_url, artfp)
+        shutil.copy(art_url, tmp)
         logger.debug(f"Album art '{art_url}' copied to '{artfp}'")
     elif Path(art_url).is_file():
-        shutil.copy(art_url, artfp)
+        shutil.copy(art_url, tmp)
         logger.debug(f"Album art '{art_url}' copied to '{artfp}'")
     else:
         logger.debug(
             f"Invalid schema for {art_url}. Please report this as a bug."
         )
         return
-    # Convert image to JPEG
-    if config["convert_to_jpeg"]:
-        artfp2 = artfp.parent / (artfp.stem + ".jpeg")
-        with Image.open(artfp) as im:
-            im.save(artfp2)
-        shutil.move(artfp2, artfp)
+    # Always convert to PNG so gdk-pixbuf always gets a recognized format,
+    # then atomically replace artfp so waybar never reads a partial file.
+    try:
+        with Image.open(tmp) as im:
+            im.convert("RGBA").save(tmp, "PNG")
+    except Exception as e:
+        logger.warning(f"Could not convert album art to PNG: {e}")
+    shutil.move(tmp, artfp)
     # Update album art on bar
     signal_album_art_change()
 
