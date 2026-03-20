@@ -48,7 +48,14 @@ lyrics = dict()
 def on_player_appeared(manager, player, requested_players):
     logger.debug("I was called")
     if player and any(player.name.startswith(rp) for rp in requested_players):
-        init_player(manager, player)
+        # Only init if this is the active/selected player or no player is active
+        active = get_active_player(manager, requested_players)
+        if not active or player.name == active:
+            init_player(manager, player)
+        else:
+            logger.debug(
+                f"New player '{player.name}' appeared but '{active}' is selected, skipping"
+            )
     else:
         logger.debug(
             "New player appeared, but it's not the selected player, skipping"
@@ -129,8 +136,41 @@ def on_player_vanished(manager, player):
     return True
 
 
+def check_player_selection(manager, requested_players):
+    """Periodically check if the selected player changed and reinitialize."""
+    global current_player_name, last_metadata, last_art_url
+    active = get_active_player(manager, requested_players)
+    if active and active != current_player_name:
+        logger.info(f"Selected player changed to '{active}', reinitializing")
+        # Reset cached state so art and tooltip are forced to refresh
+        last_metadata = None
+        last_art_url = None
+        for player_name_obj in manager.props.player_names:
+            if player_name_obj.name == active:
+                init_player(manager, player_name_obj)
+                # Send notification about what the new player is watching
+                try:
+                    player_obj = None
+                    for p in manager.props.players:
+                        if p.props.player_name == active:
+                            player_obj = p
+                            break
+                    if player_obj:
+                        title = player_obj.get_title() or ""
+                        artist = player_obj.get_artist() or ""
+                        body = f"{title} — {artist}" if artist else title
+                        send_notification(f"Now watching: {active.upper()}", body)
+                except Exception as e:
+                    logger.warning(f"Could not send switch notification: {e}")
+                break
+    return True  # Keep timer running
+
+
 def on_metadata(player, metadata, manager):
     logger.debug("I was called")
+    if player.props.player_name != current_player_name:
+        logger.debug(f"Ignoring metadata from '{player.props.player_name}', active is '{current_player_name}'")
+        return True
     update_metadata(player, metadata, manager)
     logger.debug("Returning True")
     return True
@@ -138,6 +178,9 @@ def on_metadata(player, metadata, manager):
 
 def on_playback_status(player, status, manager):
     logger.info("I was called")
+    if player.props.player_name != current_player_name:
+        logger.debug(f"Ignoring playback status from '{player.props.player_name}', active is '{current_player_name}'")
+        return True
     logger.debug(f"status={status}")
     logger.debug("Calling register_refresh_interval_callback")
     register_refresh_interval_callback(player, manager)
@@ -148,13 +191,20 @@ def on_playback_status(player, status, manager):
 
 
 def on_refresh_interval(manager):
-    global is_refint
+    global is_refint, current_player_name
     logger.debug("I was called")
     if len(manager.props.players) == 0:
         logger.debug("Returning False")
         is_refint = False
         return False
-    player = manager.props.players[0]
+    # Find the current player by name instead of blindly using players[0]
+    player = None
+    for p in manager.props.players:
+        if p.props.player_name == current_player_name:
+            player = p
+            break
+    if player is None:
+        player = manager.props.players[0]
     is_playing = player.props.status == "Playing"
     if not is_playing:
         logger.debug("Returning False")
@@ -273,12 +323,18 @@ def download_art(art_url):
         return
     # Always convert to PNG so gdk-pixbuf always gets a recognized format,
     # then atomically replace artfp so waybar never reads a partial file.
+    # Use a separate output path — PIL can't read and write the same file.
+    tmp_out = artfp.parent / (artfp.name + ".tmp2")
     try:
         with Image.open(tmp) as im:
-            im.convert("RGBA").save(tmp, "PNG")
+            im.convert("RGBA").save(tmp_out, "PNG")
+        tmp.unlink(missing_ok=True)
+        shutil.move(tmp_out, artfp)
     except Exception as e:
         logger.warning(f"Could not convert album art to PNG: {e}")
-    shutil.move(tmp, artfp)
+        tmp_out.unlink(missing_ok=True)
+        if tmp.exists():
+            shutil.move(tmp, artfp)
     # Update album art on bar
     signal_album_art_change()
 
@@ -759,6 +815,12 @@ def main():
     # manager.connect("player-appeared", on_player_appeared)
     manager.connect("name-appeared", on_player_appeared_inst)
     manager.connect("player-vanished", on_player_vanished)
+
+    # Poll for selected player changes every 500ms
+    check_selection_inst = partial(
+        check_player_selection, requested_players=requested_players
+    )
+    GLib.timeout_add(500, check_selection_inst, manager)
 
     # signal.signal(signal.SIGINT, signal_handler)
     # signal.signal(signal.SIGTERM, signal_handler)
