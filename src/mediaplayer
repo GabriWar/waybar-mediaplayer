@@ -8,6 +8,7 @@ import io
 import json
 import logging
 import math
+import os
 import re
 import shutil
 import subprocess
@@ -31,13 +32,15 @@ config = None
 logger = logging.getLogger(__name__)
 artfp = Path("/tmp/waybar-mediaplayer-art")
 selected_player_fp = Path("/tmp/waybar-mediaplayer-selected-player")
+notification_fp = Path("/tmp/waybar-mediaplayer-last-notification")
+output_fp = Path("/tmp/waybar-mediaplayer-output")
+pid_fp = Path("/tmp/waybar-mediaplayer-pid")
 current_player_name = None
 last_metadata = None
 last_art_url = None
 last_title = None
 last_rot = 0
 last_rot_time = 0
-last_notification_time = 0
 # Whether refresh_interval callback is registered
 is_refint = False
 format_class = None
@@ -142,31 +145,41 @@ def on_player_vanished(manager, player):
 
 def check_player_selection(manager, requested_players):
     """Periodically check if the selected player changed and reinitialize."""
-    global current_player_name, last_metadata, last_art_url, last_title
+    global current_player_name, last_metadata, last_art_url, last_title, is_refint
     active = get_active_player(manager, requested_players)
     if active and active != current_player_name:
         logger.info(f"Selected player changed to '{active}', reinitializing")
-        # Reset cached state so art and tooltip are forced to refresh
+        # Update current name immediately so we stop showing the old player's data.
+        # Reset is_refint so the new player can register its own refresh timer
+        # (the old timer will stop itself on next tick when it can't find the player).
+        current_player_name = active
         last_metadata = None
         last_art_url = None
         last_title = None
+        is_refint = False
+        delete_album_art()
+        # Show player name as placeholder until real track info loads
+        player_label = active.split(".")[0].upper()
+        write_output(player_label)
+        # Find the player in manager and init it
         for player_name_obj in manager.props.player_names:
             if player_name_obj.name == active:
                 init_player(manager, player_name_obj)
-                # Send notification about what the new player is watching
-                try:
-                    player_obj = None
-                    for p in manager.props.players:
-                        if p.props.player_name == active:
-                            player_obj = p
-                            break
-                    if player_obj:
-                        title = player_obj.get_title() or ""
-                        artist = player_obj.get_artist() or ""
-                        body = f"{title} — {artist}" if artist else title
-                        send_notification(f"Now watching: {active.upper()}", body)
-                except Exception as e:
-                    logger.warning(f"Could not send switch notification: {e}")
+                # Send notification
+                if config["is_notification"]:
+                    try:
+                        player_obj = None
+                        for p in manager.props.players:
+                            if p.props.player_name == active:
+                                player_obj = p
+                                break
+                        if player_obj:
+                            title = player_obj.get_title() or ""
+                            artist = player_obj.get_artist() or ""
+                            body = f"{title} — {artist}" if artist else title
+                            send_notification(f"Now playing: {player_label}", body)
+                    except Exception as e:
+                        logger.warning(f"Could not send switch notification: {e}")
                 break
     return True  # Keep timer running
 
@@ -198,18 +211,17 @@ def on_playback_status(player, status, manager):
 def on_refresh_interval(manager):
     global is_refint, current_player_name
     logger.debug("I was called")
-    if len(manager.props.players) == 0:
-        logger.debug("Returning False")
-        is_refint = False
-        return False
-    # Find the current player by name instead of blindly using players[0]
+    # Find the current player strictly by name — never fall back to players[0]
+    # as that would write stale data from a previous player
     player = None
     for p in manager.props.players:
         if p.props.player_name == current_player_name:
             player = p
             break
     if player is None:
-        player = manager.props.players[0]
+        logger.debug("Current player not in managed list, stopping timer")
+        is_refint = False
+        return False
     is_playing = player.props.status == "Playing"
     if not is_playing:
         logger.debug("Returning False")
@@ -239,8 +251,10 @@ def write_output(text=None, class_=None, tooltip=""):
         "class": class_,
         "tooltip": "<span>" + tooltip + "</span>",
     }
-    sys.stdout.write(json.dumps(output) + "\n")
+    line = json.dumps(output) + "\n"
+    sys.stdout.write(line)
     sys.stdout.flush()
+    output_fp.write_text(line)
 
 
 def register_refresh_interval_callback(player, manager):
@@ -276,6 +290,9 @@ def gen_widget_text(player):
         and ":ad:" in metadata["mpris:trackid"]
     ):
         song_info = "AD PLAYING"
+    elif not title.strip() and not (artist or "").strip():
+        # No track info — show the player source name, no scrolling
+        return icon + player.props.player_name.upper()
     else:
         song_info = f"{title.strip()} - {artist.strip()}"
 
@@ -343,21 +360,28 @@ def download_art(art_url):
 
 
 def send_notification(summary, body):
-    global last_notification_time
+    if not summary:
+        return
+    # Use a shared file so multiple waybar instances don't double-notify
+    now = time.time()
+    if notification_fp.exists():
+        if now - notification_fp.stat().st_mtime < config["notification_min_interval"]:
+            return
+    notification_fp.touch()
     cmd = [
         "notify-send",
         "--app-name=waybar-mediaplayer",
-        "--icon=" + artfp,
+        "--urgency=low",
+        "--icon=" + str(artfp),
         summary,
         body,
     ]
-    logger.error(f"Running {cmd}")
+    logger.debug(f"Running {cmd}")
     subprocess.run(cmd)
-    last_notification_time = time.time()
 
 
 def update_metadata(player, metadata, manager):
-    global last_notification_time, last_art_url, last_title
+    global last_art_url, last_title
     logger.info("I was called")
     metadata = dict(metadata)
     # Update progressbar
@@ -377,10 +401,7 @@ def update_metadata(player, metadata, manager):
         download_art(art_url)
         last_art_url = art_url
     # Notification
-    notexp = time.time() - last_notification_time
-    if config["is_notification"] and (
-        notexp >= config["notification_min_interval"]
-    ):
+    if config["is_notification"]:
         send_notification(player.get_title(), player.get_artist())
     # Lyrics
     get_new_lyrics(artist, title)
@@ -483,6 +504,10 @@ def gen_class(perc):
 def update_progressbar(manager, player):
     global last_metadata, lyrics
     logger.debug("I was called")
+    # Hard guard: never write output for a player that isn't the active one
+    if player.props.player_name != current_player_name:
+        logger.debug(f"Ignoring update from '{player.props.player_name}', active is '{current_player_name}'")
+        return False
     # Get percentage in the track
     pos = player.get_position()
     logger.debug(f"pos={pos}")
@@ -534,8 +559,18 @@ def update_progressbar(manager, player):
     elapsed = (time.time() - last_rot_time) * 1000
     rot_needs_update = elapsed > config["text_rot_int"]
     # Check if progress bar needs to be updated
-    diff = metadata["perc"] - last_metadata["perc"] if last_metadata else 99999
-    pbar_needs_update = diff > config["interval"]
+    diff = (metadata["perc"] - last_metadata["perc"]) if last_metadata else 99999
+    pbar_needs_update = abs(diff) > config["interval"]
+    # If position jumped backward (restart/previous), force art re-download now.
+    # on_metadata won't fire for same-song restarts so we must handle it here.
+    if last_metadata and diff < -5:
+        global last_art_url, last_title
+        last_art_url = None
+        last_title = None
+        art_url = dict(player.props.metadata).get("mpris:artUrl", None)
+        if art_url:
+            download_art(art_url)
+            last_art_url = art_url
     # Check if lyrics needs an update
     if lyrics:
         # pos is in microseconds
@@ -643,6 +678,43 @@ def init_player(manager, name):
     # If we are playing, register refresh interval callback
     register_refresh_interval_callback(player, manager)
     logger.debug("Returning None")
+
+
+def is_primary_instance():
+    """Return True if this process should be the primary (logic-running) instance."""
+    if pid_fp.exists():
+        try:
+            pid = int(pid_fp.read_text().strip())
+            os.kill(pid, 0)  # Raises if process is dead
+            return False  # Another instance is alive
+        except (ProcessLookupError, ValueError, OSError):
+            pass
+    pid_fp.write_text(str(os.getpid()))
+    return True
+
+
+def run_as_relay():
+    """Relay the primary instance's output to stdout, exit if primary dies."""
+    last_content = None
+    while True:
+        # Check primary is still alive
+        if pid_fp.exists():
+            try:
+                pid = int(pid_fp.read_text().strip())
+                os.kill(pid, 0)
+            except (ProcessLookupError, ValueError, OSError):
+                # Primary died — exit so waybar restarts us as the new primary
+                sys.exit(0)
+        else:
+            sys.exit(0)
+        # Relay output if it changed
+        if output_fp.exists():
+            content = output_fp.read_text()
+            if content and content != last_content:
+                sys.stdout.write(content)
+                sys.stdout.flush()
+                last_content = content
+        time.sleep(0.5)
 
 
 def signal_handler(sig, frame):
@@ -781,6 +853,12 @@ def main():
     # Handle monitor command
     ini = False
     if arguments.command == "monitor":
+        if not is_primary_instance():
+            logger.info("Secondary instance detected, running as relay")
+            run_as_relay()
+            sys.exit(0)
+        import atexit
+        atexit.register(lambda: pid_fp.unlink(missing_ok=True))
         # Prioritize selected player
         selected = get_selected_player()
         player_to_init = None

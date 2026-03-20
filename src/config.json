@@ -1,6 +1,6 @@
 {
   "refresh_interval": 500,
-  "is_notification": false,
+  "is_notification": true,
   "notification_min_interval": 2,
   "widget_length": 50,
   "sepchar": "",
